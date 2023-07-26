@@ -1,6 +1,6 @@
-import {Text, View} from 'react-native';
+// import {Text, View} from 'react-native';
 import React, {Component} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+// import {NavigationContainer} from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Foundation';
 import Home from './Home';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -10,6 +10,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Search from './Search';
 import Feed from './Feed';
 import PlayList from './PlayList';
+import {responsiveWidth} from 'react-native-responsive-dimensions';
 const Tab = createBottomTabNavigator();
 
 export class Main extends Component {
@@ -25,6 +26,10 @@ export class Main extends Component {
             overflow: 'hidden',
             backfaceVisibility: 'hidden',
             borderColor: '#000',
+            borderLeftColor: '#000',
+            position: 'absolute',
+            bottom: 0,
+            width: responsiveWidth(100),
           },
         }}>
         <Tab.Screen

@@ -103,7 +103,6 @@ export class MusicPlay extends Component<IProps, Istate> {
   };
   render() {
     const {startstop, duration, min, sec, currentTime} = this.state;
-    console.log(duration, min, sec);
     const data = this.props.state.DisplayItem;
     return (
       data && (
@@ -156,9 +155,11 @@ export class MusicPlay extends Component<IProps, Istate> {
             style={{marginVertical: responsiveHeight(3), alignItems: 'center'}}>
             <Slider
               style={Styles.Slider}
-              thumbTintColor="#844DFB"
+              thumbTintColor="#fff"
               minimumValue={0}
               maximumValue={duration}
+              maximumTrackTintColor="#fff"
+              minimumTrackTintColor="#fff"
               value={currentTime}
               onValueChange={value => this.onDurationChange(value)}
             />
@@ -251,6 +252,7 @@ const Styles = StyleSheet.create({
   Slider: {
     width: responsiveWidth(80),
     height: responsiveHeight(1.9),
+    color: '#fff',
   },
   container: {
     flex: 1,
