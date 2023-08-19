@@ -1,24 +1,24 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {Component} from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react';
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import {
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import EnpyIcons from 'react-native-vector-icons/Entypo';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import Fonttiston from 'react-native-vector-icons/Fontisto';
-import {ADD_FAV, REMOVE_FAV, Change_Display_item} from '../redux/Actions';
+import { ADD_FAV, REMOVE_FAV, Change_Display_item } from '../redux/Actions';
 import Sound from 'react-native-sound';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Globalstate, item} from '../redux/Reducer';
+import { Globalstate, item } from '../redux/Reducer';
 import Slider from '@react-native-community/slider';
 
 interface IProps {
-  route?: {params: {data: any}};
+  route?: { params: { data: any } };
   ADD_FAV: (item: any) => any;
   REMOVE_FAV: (id: number) => void;
   navigation?: {
@@ -59,20 +59,21 @@ export class MusicPlay extends Component<IProps, Istate> {
       const time = this.music?.getDuration();
       const min = Number(time) / 60;
       const sec = Math.round((Number(time) - min) * 60);
-      this.setState({duration: time, min: min, sec: sec});
+      this.setState({ duration: time, min: min, sec: sec });
     });
     // this.setDragByTime();
   }
   PlaySong = async () => {
     const data = this.props.state.DisplayItem;
-
+    const { currentTime } = this.state
     if (data) {
-      this.setState({startstop: false});
-      this.music = new Sound(data.url, Sound.MAIN_BUNDLE, error => {
+      this.setState({ startstop: false });
+      this.music = new Sound(data.url, Sound.MAIN_BUNDLE, async error => {
         if (error) {
           console.log(error);
           return;
         }
+        await this.music?.setCurrentTime(currentTime);
         this.music?.play();
       });
 
@@ -86,23 +87,27 @@ export class MusicPlay extends Component<IProps, Istate> {
   setDragByTime = () => {
     setInterval(() => {
       this.music?.getCurrentTime(presentTime => {
-        this.setState({currentTime: presentTime});
+        this.setState({ currentTime: presentTime });
       });
     }, 1000);
   };
+
   stop = async () => {
-    this.setState({startstop: true});
+    this.setState({ startstop: true, currentTime: 0 });
     this.music?.pause();
   };
+
   replay = () => {
     this.music?.getCurrentTime();
   };
+
   onDurationChange = (value: number) => {
     console.log(value);
     this.music?.setCurrentTime(value);
+    this.setState({ currentTime: value });
   };
   render() {
-    const {startstop, duration, min, sec, currentTime} = this.state;
+    const { startstop, duration, min, sec, currentTime } = this.state;
     const data = this.props.state.DisplayItem;
     return (
       data && (
@@ -133,7 +138,7 @@ export class MusicPlay extends Component<IProps, Istate> {
           <View style={Styles.imgDown}>
             <View>
               <Text style={Styles.title}>{data.title}</Text>
-              <Text style={{color: '#fff'}}>{data.artist}</Text>
+              <Text style={{ color: '#fff' }}>{data.artist}</Text>
             </View>
             {!data.favornot ? (
               <FeatherIcons
@@ -152,7 +157,7 @@ export class MusicPlay extends Component<IProps, Istate> {
             )}
           </View>
           <View
-            style={{marginVertical: responsiveHeight(3), alignItems: 'center'}}>
+            style={{ marginVertical: responsiveHeight(3), alignItems: 'center' }}>
             <Slider
               style={Styles.Slider}
               thumbTintColor="#fff"
@@ -176,6 +181,7 @@ export class MusicPlay extends Component<IProps, Istate> {
               color="#fff"
               onPress={() => {
                 this.stop();
+                this.setState({ currentTime: 0 })
                 this.props.Change_Display_item(Number(data.id), 'dec');
                 !startstop && this.PlaySong();
               }}
@@ -192,6 +198,7 @@ export class MusicPlay extends Component<IProps, Istate> {
               color="#fff"
               onPress={() => {
                 this.stop();
+                this.setState({ currentTime: 0 })
                 this.props.Change_Display_item(Number(data.id), 'inc');
                 !startstop && this.PlaySong();
               }}
@@ -210,7 +217,7 @@ export class MusicPlay extends Component<IProps, Istate> {
                 size={responsiveHeight(4)}
                 color="#fff"
               />
-              <Text style={{fontSize: responsiveHeight(2.5), color: '#fff'}}>
+              <Text style={{ fontSize: responsiveHeight(2.5), color: '#fff' }}>
                 Earpods
               </Text>
             </View>
